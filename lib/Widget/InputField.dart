@@ -9,7 +9,7 @@ class InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
-      widthFactor: 0.3,
+      widthFactor: 0.8,
       child: TextField(
         obscureText: obscureText,
         decoration: InputDecoration(
