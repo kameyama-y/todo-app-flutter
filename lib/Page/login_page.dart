@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Page/signup_page.dart';
+import '../Page/TaskListPage.dart';
 import '../Widget/InputField.dart';
 
 class LoginPage extends StatelessWidget {
@@ -37,6 +38,14 @@ class LoginPage extends StatelessWidget {
                   ),
                   onPressed: () {
                     // 認証処理を後で追加
+
+                    // 一旦遷移
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TaskListPage(),
+                      ),
+                    );
                   },
                   child: const Text(
                     "ログイン",
