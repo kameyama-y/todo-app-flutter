@@ -1,49 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../Widget/edit_task_button.dart';
+import 'task_provider.dart';
 
-// タスクのデータモデル
-class Task {
-  String title;
-  bool isDone;
-
-  Task(this.title, {this.isDone = false});
-}
-
-class TaskListPage extends StatefulWidget {
+class TaskListPage extends ConsumerStatefulWidget {
   const TaskListPage({super.key});
 
   @override
-  State<TaskListPage> createState() => _TaskListPageState();
+  ConsumerState<TaskListPage> createState() => _TaskListPageState();
 }
 
-class _TaskListPageState extends State<TaskListPage> {
-  // タスクリスト（タイトルと完了状態を持つ）
-  final List<Task> taskList = [Task("朝会"), Task("Flutter 勉強"), Task("日報")];
-
+class _TaskListPageState extends ConsumerState<TaskListPage> {
   // 新規タスク追加用
   final TextEditingController _controller = TextEditingController();
 
   void _addTask() {
-    if (_controller.text.trim().isEmpty) return;
-    setState(() {
-      taskList.add(Task(_controller.text.trim()));
-      _controller.clear();
-    });
-  }
-
-  void _removeTask(int index) {
-    setState(() {
-      taskList.removeAt(index);
-    });
-  }
-
-  void _toggleTask(int index, bool? value) {
-    setState(() {
-      taskList[index].isDone = value ?? false;
-    });
+    ref.read(taskProvider.notifier).addTask(_controller.text.trim());
   }
 
   @override
   Widget build(BuildContext context) {
+    final taskList = ref.watch(taskProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text("タスク一覧"), centerTitle: true),
       body: Column(
@@ -82,7 +60,9 @@ class _TaskListPageState extends State<TaskListPage> {
                   child: ListTile(
                     leading: Checkbox(
                       value: task.isDone,
-                      onChanged: (value) => _toggleTask(index, value),
+                      onChanged: (value) => ref
+                          .read(taskProvider.notifier)
+                          .toggleTask(index, value),
                     ),
                     title: Text(
                       task.title,
@@ -93,9 +73,16 @@ class _TaskListPageState extends State<TaskListPage> {
                         color: task.isDone ? Colors.grey : Colors.black,
                       ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _removeTask(index),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        EditTaskButton(index: index, currentTitle: task.title),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () =>
+                              ref.read(taskProvider.notifier).removeTask(index),
+                        ),
+                      ],
                     ),
                   ),
                 );
