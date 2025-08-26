@@ -76,7 +76,9 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        //編集ボタン
                         EditTaskButton(index: index, currentTitle: task.title),
+                        //削除ボタン
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () =>

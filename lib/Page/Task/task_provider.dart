@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // タスクのデータモデル
-// タスクのデータモデル
 class Task {
   String title;
   bool isDone;
