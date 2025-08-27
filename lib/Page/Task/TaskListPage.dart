@@ -14,8 +14,17 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
   // 新規タスク追加用
   final TextEditingController _controller = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Supabase から初期データ取得
+    Future.microtask(() => ref.read(taskProvider.notifier).fetchTasks());
+  }
+
+  //追加処理
   void _addTask() {
     ref.read(taskProvider.notifier).addTask(_controller.text.trim());
+    _controller.clear();
   }
 
   @override
