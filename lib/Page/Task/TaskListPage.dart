@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Widget/edit_task_button.dart';
+import '../login/login_state_provider.dart';
 import 'task_provider.dart';
 
 class TaskListPage extends ConsumerStatefulWidget {
@@ -86,7 +87,11 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         //編集ボタン
-                        EditTaskButton(index: index, currentTitle: task.title),
+                        EditTaskButton(
+                          index: index,
+                          currentTitle: task.title,
+                          isDone: task.isDone,
+                        ),
                         //削除ボタン
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),

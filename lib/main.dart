@@ -23,15 +23,9 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(loginStateProvider);
 
-    if (isLoggedIn == null) {
-      return MaterialApp(
-        home: Scaffold(body: Center(child: CircularProgressIndicator())),
-      );
-    }
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? TaskListPage() : LoginPage(),
+      home: isLoggedIn ? const TaskListPage() : const LoginPage(),
     );
   }
 }

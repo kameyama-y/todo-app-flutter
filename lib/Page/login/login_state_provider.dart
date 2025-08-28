@@ -1,31 +1,40 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-final loginStateProvider = StateNotifierProvider<LoginStateNotifier, bool?>((
+final loginStateProvider = StateNotifierProvider<LoginStateNotifier, bool>((
   ref,
 ) {
   return LoginStateNotifier();
 });
 
-class LoginStateNotifier extends StateNotifier<bool?> {
-  LoginStateNotifier() : super(null) {
-    _loadLoginState();
+class LoginStateNotifier extends StateNotifier<bool> {
+  LoginStateNotifier() : super(false) {
+    _checkSession();
   }
 
-  void _loadLoginState() async {
-    final prefs = await SharedPreferences.getInstance();
-    state = prefs.getBool('isLoggedIn') ?? false;
+  // 起動時にSupabaseのセッションをチェック
+  void _checkSession() {
+    final session = Supabase.instance.client.auth.currentSession;
+    state = session != null;
   }
 
-  void login() async {
-    state = true;
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', true);
+  // ログイン
+  Future<void> login(String email, String password) async {
+    final response = await Supabase.instance.client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+
+    if (response.user != null) {
+      state = true;
+    } else {
+      state = false;
+    }
   }
 
-  void logout() async {
+  // ログアウト
+  Future<void> logout() async {
+    await Supabase.instance.client.auth.signOut();
     state = false;
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', false);
   }
 }

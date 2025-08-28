@@ -7,14 +7,42 @@ import 'package:todo_app_flutter/Page/Task/TaskListPage.dart';
 import 'package:todo_app_flutter/Page/login/login_state_provider.dart';
 import 'package:todo_app_flutter/Widget/InputField.dart';
 
-class LoginPage extends ConsumerWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
 
+class _LoginPageState extends ConsumerState<LoginPage> {
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // ログイン状態の変化を監視して画面遷移
+    ref.listen<bool>(loginStateProvider, (previous, next) {
+      if (next) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const TaskListPage()),
+        );
+      }
+    });
     return Scaffold(
       body: Center(
         child: Padding(
@@ -42,25 +70,15 @@ class LoginPage extends ConsumerWidget {
                 widthFactor: 0.5,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent, //背景
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                    ), // 高さを少し大きく
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: () {
-                    // 認証処理を後で追加
-
-                    //ログイン処理
-                    ref.read(loginStateProvider.notifier).login();
-                    print(
-                      'loginStateProvider = ${ref.read(loginStateProvider)}',
-                    );
-
-                    // 一旦遷移
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => TaskListPage()),
-                    );
+                  onPressed: () async {
+                    final email = emailController.text.trim();
+                    final password = passwordController.text.trim();
+                    await ref
+                        .read(loginStateProvider.notifier)
+                        .login(email, password);
                   },
                   child: const Text(
                     "ログイン",
@@ -73,7 +91,6 @@ class LoginPage extends ConsumerWidget {
               // 新規登録リンク
               TextButton(
                 onPressed: () {
-                  // 新規登録ページへ遷移
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SignUpPage()),

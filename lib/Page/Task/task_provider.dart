@@ -79,7 +79,7 @@ class TaskNotifier extends StateNotifier<List<Task>> {
   Future<void> removeTask(int index) async {
     final task = state[index];
     try {
-      // Supabaseに追加
+      // 削除
       final response = await supabase
           .from('todos')
           .delete()
@@ -99,18 +99,60 @@ class TaskNotifier extends StateNotifier<List<Task>> {
   }
 
   //チェックボックス
-  void toggleTask(int index, bool? value) {
-    final newList = [...state];
-    // newList[index].isDone = value ?? false;
-    state = newList;
+  Future<void> toggleTask(int index, bool? value) async {
+    final task = state[index];
+    try {
+      // 更新
+      final response = await supabase
+          .from('todos')
+          .update({'is_done': value})
+          .eq('id', task.id)
+          .select();
+
+      if (response == null || response.isEmpty) {
+        print('Error adding task: response is empty');
+        return;
+      }
+
+      final updatedData = response.first as Map<String, dynamic>;
+      final updatedTask = Task.fromMap(updatedData);
+
+      // stateのリストをコピーして該当要素を置き換え
+      final newList = [...state];
+      newList[index] = updatedTask;
+      state = newList;
+    } catch (e) {
+      print('Error adding task: $e');
+    }
   }
 
   //編集
-  void editTask(int index, String newTitle) {
+  Future<void> editTask(int index, String newTitle) async {
     if (newTitle.trim().isEmpty) return;
-    final newList = [...state];
-    // newList[index].title = newTitle.trim();
-    state = newList;
+    final task = state[index];
+    try {
+      // 更新
+      final response = await supabase
+          .from('todos')
+          .update({'text': newTitle.trim()})
+          .eq('id', task.id)
+          .select();
+
+      if (response == null || response.isEmpty) {
+        print('Error adding task: response is empty');
+        return;
+      }
+
+      final updatedData = response.first as Map<String, dynamic>;
+      final updatedTask = Task.fromMap(updatedData);
+
+      // stateのリストをコピーして該当要素を置き換え
+      final newList = [...state];
+      newList[index] = updatedTask;
+      state = newList;
+    } catch (e) {
+      print('Error adding task: $e');
+    }
   }
 }
 
