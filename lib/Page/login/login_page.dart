@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:todo_app_flutter/Page/signup_page.dart';
+import 'package:todo_app_flutter/Page/Signup/signup_page.dart';
 import 'package:todo_app_flutter/Page/Task/TaskListPage.dart';
 
 import 'package:todo_app_flutter/Page/login/login_state_provider.dart';

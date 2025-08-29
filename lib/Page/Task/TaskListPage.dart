@@ -97,6 +97,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () =>
                               ref.read(taskProvider.notifier).removeTask(index),
+                          // ref.read(loginStateProvider.notifier).logout(),
                         ),
                       ],
                     ),
