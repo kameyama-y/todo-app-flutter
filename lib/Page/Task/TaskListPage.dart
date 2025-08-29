@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../Widget/edit_task_button.dart';
+import '../Profile/ProfilePage.dart';
 import '../login/login_state_provider.dart';
 import 'task_provider.dart';
 
@@ -33,7 +34,22 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
     final taskList = ref.watch(taskProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("タスク一覧"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("タスク一覧"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: "ユーザー情報",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // 入力フォーム
